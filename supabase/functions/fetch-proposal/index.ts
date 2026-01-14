@@ -18,6 +18,8 @@ serve(async (req) => {
     const url = new URL(req.url);
     const proposalId = url.searchParams.get("id");
 
+    console.log("Fetching proposal:", proposalId);
+
     if (!proposalId) {
       return new Response(
         JSON.stringify({ error: "Missing proposal ID" }),
@@ -30,10 +32,12 @@ serve(async (req) => {
     if (!AIRTABLE_API_KEY) {
       console.error("AIRTABLE_API_KEY not configured");
       return new Response(
-        JSON.stringify({ error: "Server configuration error" }),
+        JSON.stringify({ error: "Server configuration error - missing API key" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    console.log("API key configured, calling Airtable...");
 
     // Search by proposal_id field
     const airtableUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}?filterByFormula={proposal_id}="${proposalId}"`;
@@ -55,10 +59,11 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log("Airtable response records count:", data.records?.length || 0);
 
     if (!data.records || data.records.length === 0) {
       return new Response(
-        JSON.stringify({ error: "Proposal not found" }),
+        JSON.stringify({ error: "Proposal not found", proposalId }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -66,6 +71,8 @@ serve(async (req) => {
     // Transform Airtable record to our Proposal format
     const record = data.records[0];
     const fields = record.fields;
+
+    console.log("Found record:", record.id, "with client:", fields.client_name);
 
     const proposal = {
       id: record.id,
@@ -106,15 +113,18 @@ serve(async (req) => {
       password: fields.password || "",
     };
 
+    console.log("Successfully transformed proposal");
+
     return new Response(
       JSON.stringify({ proposal }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
     return new Response(
-      JSON.stringify({ error: "Internal server error" }),
+      JSON.stringify({ error: "Internal server error", message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
