@@ -25,6 +25,13 @@ const ProposalPage = () => {
         return;
       }
 
+      // Common mistake: visiting the route template (/proposal/:proposalId)
+      if (proposalId.startsWith(":")) {
+        setError("Invalid proposal link. Please use a link like /proposal/your-proposal-id (not /proposal/:proposalId).");
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const data = await fetchProposal(proposalId);
         if (data) {

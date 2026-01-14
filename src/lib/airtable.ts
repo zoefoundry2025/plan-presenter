@@ -3,6 +3,12 @@ import { mockProposal } from "@/data/mockProposal";
 
 // Fetch a proposal by ID via edge function
 export const fetchProposal = async (proposalId: string): Promise<Proposal | null> => {
+  // Guard: if someone visits a route template like /proposal/:proposalId
+  if (!proposalId || proposalId.startsWith(":")) {
+    console.warn("Invalid proposalId passed to fetchProposal:", proposalId);
+    return null;
+  }
+
   // Use mock data for "demo" proposal
   if (proposalId === "demo") {
     return mockProposal;

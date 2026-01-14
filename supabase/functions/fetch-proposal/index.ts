@@ -27,6 +27,18 @@ serve(async (req) => {
       );
     }
 
+    // Guard against accidentally calling the function with a route template (":proposalId")
+    if (proposalId.startsWith(":")) {
+      return new Response(
+        JSON.stringify({
+          error: "Invalid proposal ID",
+          proposalId,
+          hint: "Use a real proposal ID (e.g., /proposal/dan-95425-2024) and not the route template /proposal/:proposalId.",
+        }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const AIRTABLE_API_KEY = Deno.env.get("AIRTABLE_API_KEY");
     
     if (!AIRTABLE_API_KEY) {
