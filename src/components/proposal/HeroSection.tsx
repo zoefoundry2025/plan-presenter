@@ -17,14 +17,14 @@ export const HeroSection = ({ branding, clientName, zipCode }: HeroSectionProps)
             className="h-12 mx-auto mb-6"
           />
         ) : (
-          <p className="text-primary-foreground/80 text-lg mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-4">
             {branding.companyName}
-          </p>
+          </h1>
         )}
         
-        <h1 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
+        <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
           Your Recommended Medicare Plan
-        </h1>
+        </h2>
         
         <p className="text-primary-foreground/90 text-lg md:text-xl">
           Personalized recommendation for {clientName} • Zip Code {zipCode}
