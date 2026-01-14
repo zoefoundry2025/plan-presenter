@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Calibri', 'Carlito', 'Liberation Sans', 'DejaVu Sans', 'Arial', 'Helvetica', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
