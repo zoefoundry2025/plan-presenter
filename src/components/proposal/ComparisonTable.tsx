@@ -71,6 +71,8 @@ export const ComparisonTable = ({ plans }: ComparisonTableProps) => {
     { label: "Star Rating", key: "starRating" },
   ];
 
+  const columnHeaders = ["Current Plan", "Option 1", "Option 2", "Option 3"];
+
   return (
     <section className="py-12 md:py-16 bg-muted/30">
       <div className="container max-w-6xl mx-auto px-4">
@@ -87,12 +89,15 @@ export const ComparisonTable = ({ plans }: ComparisonTableProps) => {
           <table className="comparison-table min-w-[800px] w-full">
             <thead>
               <tr>
-                <th className="text-left w-40">What Matters to You</th>
+                <th className="text-left w-40">Plan Details</th>
                 {plans.map((plan, index) => (
                   <th 
                     key={index} 
                     className={`${plan.isRecommended ? "highlight" : ""}`}
                   >
+                    <div className="text-xs font-medium text-muted-foreground mb-1">
+                      {columnHeaders[index] || `Option ${index}`}
+                    </div>
                     {plan.name}
                   </th>
                 ))}
