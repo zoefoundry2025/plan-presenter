@@ -16,6 +16,7 @@ const ProposalPage = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Load proposal data
   useEffect(() => {
     const loadProposal = async () => {
       if (!proposalId) {
@@ -24,7 +25,6 @@ const ProposalPage = () => {
         return;
       }
 
-      // Common mistake: visiting the route template (/proposal/:proposalId)
       if (proposalId.startsWith(":")) {
         setError("Invalid proposal link. Please use a link like /proposal/your-proposal-id (not /proposal/:proposalId).");
         setIsLoading(false);
@@ -35,6 +35,11 @@ const ProposalPage = () => {
         const data = await fetchProposal(proposalId);
         if (data) {
           setProposal(data);
+          // Check session storage for unlock state
+          const unlocked = sessionStorage.getItem(`proposal_${proposalId}_unlocked`);
+          if (unlocked === "true") {
+            setIsUnlocked(true);
+          }
         } else {
           setError("Proposal not found");
         }
@@ -48,6 +53,11 @@ const ProposalPage = () => {
 
     loadProposal();
   }, [proposalId]);
+
+  const handleUnlock = () => {
+    setIsUnlocked(true);
+    sessionStorage.setItem(`proposal_${proposalId}_unlocked`, "true");
+  };
 
   // Loading state
   if (isLoading) {
@@ -77,21 +87,6 @@ const ProposalPage = () => {
       </div>
     );
   }
-
-  const handleUnlock = () => {
-    setIsUnlocked(true);
-    sessionStorage.setItem(`proposal_${proposalId}_unlocked`, "true");
-  };
-
-  // Check session storage for unlock state
-  useEffect(() => {
-    if (proposal && !isUnlocked) {
-      const unlocked = sessionStorage.getItem(`proposal_${proposalId}_unlocked`);
-      if (unlocked === "true") {
-        setIsUnlocked(true);
-      }
-    }
-  }, [proposal, proposalId, isUnlocked]);
 
   // Password gate
   if (!isUnlocked) {
@@ -127,5 +122,4 @@ const ProposalPage = () => {
     </div>
   );
 };
-
 export default ProposalPage;
