@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/proposal/HeroSection";
 import { TopRecommendationCard } from "@/components/proposal/TopRecommendationCard";
 import { ComparisonTable } from "@/components/proposal/ComparisonTable";
 import { ContactFooter } from "@/components/proposal/ContactFooter";
+import { DisclaimerSection } from "@/components/proposal/DisclaimerSection";
 import { Loader2 } from "lucide-react";
 
 const ProposalPage = () => {
@@ -115,9 +116,11 @@ const ProposalPage = () => {
         recommendedPlanName={proposal.recommendedPlan.name}
       />
       
-      <ContactFooter 
-        agent={proposal.agent}
-        disclaimer={proposal.disclaimer}
+      <ContactFooter agent={proposal.agent} />
+      
+      <DisclaimerSection 
+        cmsDisclaimers={proposal.cmsDisclaimers}
+        legacyDisclaimer={proposal.disclaimer}
       />
     </div>
   );

@@ -174,10 +174,7 @@ const BenefitsPage = () => {
         </div>
       </section>
 
-      <ContactFooter 
-        agent={proposal.agent}
-        disclaimer={proposal.disclaimer}
-      />
+      <ContactFooter agent={proposal.agent} />
     </div>
   );
 };
