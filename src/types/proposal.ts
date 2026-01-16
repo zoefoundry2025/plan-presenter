@@ -19,17 +19,7 @@ export interface PersonalizedReason {
 export interface ComparisonPlan {
   name: string;
   isRecommended?: boolean;
-  premium: string;
-  partB?: string;
-  maxOutOfPocket: string;
-  drugDeductible: string;
-  transportation: string;
-  acupuncture: string;
-  chiropractic: string;
-  gymMembership: string;
-  otcBenefit: string;
-  dentalVision: string;
-  starRating: number;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface AgentContact {
