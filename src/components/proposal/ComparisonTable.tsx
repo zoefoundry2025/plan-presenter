@@ -6,6 +6,27 @@ interface ComparisonTableProps {
   recommendedPlanName?: string;
 }
 
+// Convert camelCase/snake_case keys to readable labels
+const formatKeyToLabel = (key: string): string => {
+  // Skip these meta fields
+  if (key === "name" || key === "isRecommended") return "";
+  
+  // Handle common abbreviations
+  const abbreviations: Record<string, string> = {
+    otc: "OTC",
+    partB: "Medicare Part B",
+    maxOutOfPocket: "Max Out-of-Pocket",
+  };
+  
+  if (abbreviations[key]) return abbreviations[key];
+  
+  // Convert camelCase to Title Case with spaces
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
 const renderValue = (value: string) => {
   if (value.toLowerCase().includes("not offered") || value.toLowerCase().includes("not covered")) {
     return (
@@ -57,19 +78,17 @@ const renderStarRating = (rating: number) => {
 };
 
 export const ComparisonTable = ({ plans }: ComparisonTableProps) => {
-  const rows = [
-    { label: "Plan Premium", key: "premium" },
-    { label: "Medicare Part B", key: "partB" },
-    { label: "Max Out-of-Pocket", key: "maxOutOfPocket" },
-    { label: "Drug Deductible", key: "drugDeductible" },
-    { label: "Transportation", key: "transportation" },
-    { label: "Acupuncture", key: "acupuncture" },
-    { label: "Chiropractic", key: "chiropractic" },
-    { label: "Gym Membership", key: "gymMembership" },
-    { label: "OTC Benefit", key: "otcBenefit" },
-    { label: "Dental & Vision", key: "dentalVision" },
-    { label: "Star Rating", key: "starRating" },
-  ];
+  // Derive rows dynamically from the first plan's keys
+  const firstPlan = plans[0];
+  if (!firstPlan) return null;
+
+  const rows = Object.keys(firstPlan)
+    .filter((key) => key !== "name" && key !== "isRecommended")
+    .map((key) => ({
+      label: formatKeyToLabel(key),
+      key,
+    }))
+    .filter((row) => row.label); // Remove any with empty labels
 
   const columnHeaders = ["Current Plan", "Option 1", "Option 2", "Option 3"];
 
@@ -116,7 +135,7 @@ export const ComparisonTable = ({ plans }: ComparisonTableProps) => {
                       >
                         {row.key === "starRating" 
                           ? renderStarRating(value as number)
-                          : renderValue(String(value || "N/A"))
+                          : renderValue(String(value ?? "N/A"))
                         }
                       </td>
                     );
