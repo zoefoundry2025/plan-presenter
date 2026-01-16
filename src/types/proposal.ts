@@ -30,6 +30,28 @@ export interface AgentContact {
   photoUrl?: string;
 }
 
+// CMS-required disclaimer fields
+export interface CMSDisclaimers {
+  // TPMO Disclaimer
+  numberOfOrganizations: number;
+  numberOfPlans: number;
+  
+  // Federal Contracting (one per plan in comparison)
+  planContracts: Array<{
+    planName: string;
+    planType: string; // e.g., "HMO", "PPO", "PFFS"
+  }>;
+  
+  // Star Ratings - auto-included if starRating is shown
+  showStarRatingDisclaimer: boolean;
+  
+  // Out-of-Network - required if any plan is a PPO
+  showOutOfNetworkDisclaimer: boolean;
+  
+  // Optional: custom additional disclaimers
+  additionalDisclaimer?: string;
+}
+
 export interface BrandingConfig {
   companyName: string;
   logoUrl?: string;
@@ -70,7 +92,10 @@ export interface Proposal {
   // Agent info
   agent: AgentContact;
   
-  // Disclaimer
+  // CMS-required disclaimers (structured)
+  cmsDisclaimers?: CMSDisclaimers;
+  
+  // Legacy disclaimer (for backward compatibility)
   disclaimer?: string;
   
   // Security
@@ -116,5 +141,6 @@ export interface AirtableRecord {
     
     // Disclaimer
     disclaimer_text?: string;
+    cms_disclaimers_json?: string;
   };
 }

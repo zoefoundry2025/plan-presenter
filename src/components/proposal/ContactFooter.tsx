@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 
 interface ContactFooterProps {
   agent: AgentContact;
-  disclaimer?: string;
 }
 
-export const ContactFooter = ({ agent, disclaimer }: ContactFooterProps) => {
+export const ContactFooter = ({ agent }: ContactFooterProps) => {
   return (
     <footer className="py-12 md:py-16 bg-primary text-primary-foreground">
       <div className="container max-w-4xl mx-auto px-4">
@@ -61,13 +60,6 @@ export const ContactFooter = ({ agent, disclaimer }: ContactFooterProps) => {
           </div>
         </div>
 
-        {disclaimer && (
-          <div className="border-t border-primary-foreground/20 pt-8">
-            <p className="text-xs text-primary-foreground/60 text-center max-w-3xl mx-auto leading-relaxed">
-              {disclaimer}
-            </p>
-          </div>
-        )}
       </div>
     </footer>
   );

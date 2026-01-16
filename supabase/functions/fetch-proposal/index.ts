@@ -121,6 +121,9 @@ serve(async (req) => {
         photoUrl: fields.agent_photo_url,
       },
       
+      cmsDisclaimers: fields.cms_disclaimers_json 
+        ? JSON.parse(fields.cms_disclaimers_json) 
+        : undefined,
       disclaimer: fields.disclaimer_text,
       password: fields.password || "",
     };
