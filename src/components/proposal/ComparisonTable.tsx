@@ -6,24 +6,37 @@ interface ComparisonTableProps {
   recommendedPlanName?: string;
 }
 
-// Convert camelCase/snake_case keys to readable labels
+// Convert any key format to readable labels
 const formatKeyToLabel = (key: string): string => {
-  // Skip these meta fields
+  // Skip meta fields
   if (key === "name" || key === "isRecommended") return "";
   
-  // Handle common abbreviations
+  // If key already contains spaces, assume it's human-readable - just Title Case it
+  if (key.includes(" ")) {
+    return key
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+  
+  // Handle common abbreviations for camelCase keys
   const abbreviations: Record<string, string> = {
     otc: "OTC",
     partB: "Medicare Part B",
     maxOutOfPocket: "Max Out-of-Pocket",
+    oop: "Out-of-Pocket",
   };
   
   if (abbreviations[key]) return abbreviations[key];
   
-  // Convert camelCase to Title Case with spaces
+  // Convert camelCase/snake_case to Title Case
   return key
+    .replace(/_/g, " ")
     .replace(/([A-Z])/g, " $1")
-    .replace(/^./, (str) => str.toUpperCase())
+    .split(" ")
+    .filter(word => word.length > 0)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ")
     .trim();
 };
 
@@ -133,7 +146,7 @@ export const ComparisonTable = ({ plans }: ComparisonTableProps) => {
                         key={index}
                         className={plan.isRecommended ? "highlight" : ""}
                       >
-                        {row.key === "starRating" 
+                        {row.key.toLowerCase().includes("star") && row.key.toLowerCase().includes("rating")
                           ? renderStarRating(value as number)
                           : renderValue(String(value ?? "N/A"))
                         }
