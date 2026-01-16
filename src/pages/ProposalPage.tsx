@@ -4,8 +4,7 @@ import { Proposal } from "@/types/proposal";
 import { fetchProposal } from "@/lib/airtable";
 import { PasswordGate } from "@/components/proposal/PasswordGate";
 import { HeroSection } from "@/components/proposal/HeroSection";
-import { RecommendationCard } from "@/components/proposal/RecommendationCard";
-import { BenefitsGrid } from "@/components/proposal/BenefitsGrid";
+import { TopRecommendationCard } from "@/components/proposal/TopRecommendationCard";
 import { ComparisonTable } from "@/components/proposal/ComparisonTable";
 import { ContactFooter } from "@/components/proposal/ContactFooter";
 import { Loader2 } from "lucide-react";
@@ -79,11 +78,26 @@ const ProposalPage = () => {
     );
   }
 
+  const handleUnlock = () => {
+    setIsUnlocked(true);
+    sessionStorage.setItem(`proposal_${proposalId}_unlocked`, "true");
+  };
+
+  // Check session storage for unlock state
+  useEffect(() => {
+    if (proposal && !isUnlocked) {
+      const unlocked = sessionStorage.getItem(`proposal_${proposalId}_unlocked`);
+      if (unlocked === "true") {
+        setIsUnlocked(true);
+      }
+    }
+  }, [proposal, proposalId, isUnlocked]);
+
   // Password gate
   if (!isUnlocked) {
     return (
       <PasswordGate
-        onUnlock={() => setIsUnlocked(true)}
+        onUnlock={handleUnlock}
         correctPassword={proposal.password}
         companyName={proposal.branding.companyName}
       />
@@ -99,9 +113,7 @@ const ProposalPage = () => {
         zipCode={proposal.zipCode}
       />
       
-      <RecommendationCard proposal={proposal} />
-      
-      <BenefitsGrid benefits={proposal.benefits} />
+      <TopRecommendationCard proposal={proposal} proposalId={proposalId!} />
       
       <ComparisonTable 
         plans={proposal.comparisonPlans}
